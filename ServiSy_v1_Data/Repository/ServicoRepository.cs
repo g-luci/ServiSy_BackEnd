@@ -34,9 +34,31 @@ namespace ServiSy_v1_Data.Repository
             return _Context.Servicos.FirstOrDefault(x => x.Id == Id);
         }
 
-        public List<Servico> BuscarTodosServicos(Guid prestadorId)
+        public List<Servico> BuscarTodosPaginado(Guid? prestadorId, int pagina, int tamanhoPagina)
         {
-            return _Context.Servicos.Where(x => x.Prestado_Id == prestadorId).ToList();
+            var query = _Context.Servicos.AsQueryable();
+
+            if (prestadorId.HasValue)
+            {
+                query = query.Where(s => s.Prestado_Id == prestadorId.Value);
+            }
+
+            return query
+                .Skip((pagina - 1) * tamanhoPagina)
+                .Take(tamanhoPagina)
+                .ToList();
+        }
+
+        public int ContarTotalServico(Guid? prestadorId)
+        {
+            var query = _Context.Servicos.AsQueryable();
+
+            if (prestadorId.HasValue)
+            {
+                query = query.Where(s => s.Prestado_Id == prestadorId.Value);
+            }
+
+            return _Context.Servicos.Count();
         }
 
         public void RemoverServico(Guid id)

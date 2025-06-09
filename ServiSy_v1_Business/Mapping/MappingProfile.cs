@@ -29,7 +29,8 @@ namespace ServiSy_v1_Business.Mapping
 
             CreateMap<Feedback, Feedback>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore());
-            CreateMap<Feedback, FeedbackDto>();
+            CreateMap<Feedback, FeedbackDto>()
+                .ForMember(dest => dest.NomeUsuario, opt => opt.MapFrom(src => src.Usuario.Name));
             CreateMap<FeedbackEditDto, Feedback>()
                 .ForMember(dest => dest.Servico, opt => opt.Ignore())
                 .ForMember(dest => dest.Servico_Id, opt => opt.Ignore())

@@ -49,7 +49,7 @@ namespace ServiSy_v1_API
                     Scheme = "bearer",
                     BearerFormat = "JWT",
                     In = ParameterLocation.Header,
-                    Description = "Insira o token JWT no formato: Bearer {seu token}",
+                    Description = "Insira o token JWT no formato: {seu token}",
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement

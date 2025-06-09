@@ -4,27 +4,36 @@ using Microsoft.AspNetCore.Mvc;
 using ServiSy_v1_Business.DTOs;
 using ServiSy_v1_Business.Models;
 using ServiSy_v1_Business.Service;
+using System.Security.Claims;
 
 namespace ServiSy_v1_API.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/feedbacks")]
     [Authorize]
     public class FeedbackController : ControllerBase
     {
         private readonly FeedbackService _feedbackService;
+        private readonly UsuarioService _usuarioService;
         private readonly IMapper _mapper;
 
-        public FeedbackController(FeedbackService feedbackService, IMapper mapper)
+        public FeedbackController(FeedbackService feedbackService, IMapper mapper, UsuarioService usuarioService)
         {
             _feedbackService = feedbackService;
             _mapper = mapper;
+            _usuarioService = usuarioService;
         }
 
         [HttpPost]
         public IActionResult AdicionarFeedback([FromBody] FeedbackCreateDto feedbackDto)
         {
-            _feedbackService.AdicionarFeedback(_mapper.Map<Feedback>(feedbackDto));
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null)
+            {
+                return Unauthorized();
+            }
+
+            _feedbackService.AdicionarFeedback(_mapper.Map<Feedback>(feedbackDto), Guid.Parse(userIdClaim));
 
             return Ok("FeedBack criado com sucesso");
         }
@@ -45,6 +54,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult BuscarTodosFeedback(Guid servicoId)
         {
             var feedbacks = _feedbackService.BuscarTodosFeedback(servicoId);
@@ -62,6 +72,18 @@ namespace ServiSy_v1_API.Controllers
         [Route("{id}")]
         public IActionResult AtualizarFeedback(Guid id, [FromBody] FeedbackEditDto feedbackDto)
         {
+            var feedbackAlvo = _feedbackService.BuscarFeedback(id);
+            if (feedbackAlvo == null)
+            {
+                return NotFound();
+            }
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null || feedbackAlvo.Usuario_Id != Guid.Parse(userIdClaim))
+            {
+                return Forbid();
+            }
+
             _feedbackService.AtualizarFeedback(id, feedbackDto);
 
             return Ok("Feedback atualizado");
@@ -71,6 +93,18 @@ namespace ServiSy_v1_API.Controllers
         [Route("{id}")]
         public IActionResult RemoverFeedback(Guid id)
         {
+            var feedbackAlvo = _feedbackService.BuscarFeedback(id);
+            if (feedbackAlvo == null)
+            {
+                return NoContent();
+            }
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null || feedbackAlvo.Usuario_Id != Guid.Parse(userIdClaim))
+            {
+                return Forbid();
+            }
+
             _feedbackService.RemoverFeedback(id);
             return NoContent();
         }

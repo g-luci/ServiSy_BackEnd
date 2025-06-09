@@ -13,5 +13,6 @@ namespace ServiSy_v1_Business.DTOs
         public string? Comentario { get; set; }
         public Guid Servico_Id { get; set; }
         public Guid Usuario_Id { get; set; }
+        public string NomeUsuario { get; set; }
     }
 }

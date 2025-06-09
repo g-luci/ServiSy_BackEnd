@@ -5,6 +5,7 @@ using ServiSy_v1_Business.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,23 +16,35 @@ namespace ServiSy_v1_Business.Service
         private readonly IServicoRepository _servicoRepository;
         private readonly IMapper _mapper;
 
-        public ServicoService(IServicoRepository servicoRepository, IMapper mapper)
+        public ServicoService(IServicoRepository servicoRepository, IMapper mapper, IUsuarioRepository usuarioRepository)
         {
             _servicoRepository = servicoRepository;
             _mapper = mapper;
+
         }
 
-        public void AdicionarServico(Servico servico)
+        public void AdicionarServico(Servico servico, Guid prestadorId)
         {
-            _servicoRepository.AdicionarServico(servico);
+            servico.Prestado_Id = prestadorId;
+
+           _servicoRepository.AdicionarServico(servico);
         }
         public Servico BuscarServico(Guid Id)
         {
             return _servicoRepository.BuscarServico(Id);
         }
-        public List<Servico> BuscarTodosServicos(Guid prestadorId)
+
+        public List<Servico> BuscarTodosPaginado(Guid? prestadorId, int pagina, int tamanhoPagina)
         {
-            return _servicoRepository.BuscarTodosServicos(prestadorId);
+            if (pagina < 1) pagina = 1;
+            if (tamanhoPagina > 50) tamanhoPagina = 50; 
+
+            return _servicoRepository.BuscarTodosPaginado(prestadorId, pagina, tamanhoPagina);
+        }
+
+        public int ContarTotalServicos(Guid? prestadorId)
+        {
+            return _servicoRepository.ContarTotalServico(prestadorId);
         }
         public void AtualizarServico(Guid id, ServicoEditDto servicoAtualizado)
         {

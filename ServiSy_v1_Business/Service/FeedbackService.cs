@@ -21,8 +21,10 @@ namespace ServiSy_v1_Business.Service
             _mapper = mapper;
         }
 
-        public void AdicionarFeedback(Feedback feedback)
+        public void AdicionarFeedback(Feedback feedback, Guid usuario_id)
         {
+            feedback.Usuario_Id = usuario_id;
+
             _feedbackRepository.AdicionarFeedback(feedback);
         }
         public Feedback BuscarFeedback(Guid Id)

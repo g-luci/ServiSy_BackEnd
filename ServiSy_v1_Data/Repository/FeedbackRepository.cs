@@ -1,4 +1,5 @@
-﻿using ServiSy_v1_Business.Interface;
+﻿using Microsoft.EntityFrameworkCore;
+using ServiSy_v1_Business.Interface;
 using ServiSy_v1_Business.Models;
 using ServiSy_v1_Data.Context;
 using System;
@@ -32,12 +33,17 @@ namespace ServiSy_v1_Data.Repository
 
         public Feedback BuscarFeedback(Guid Id)
         {
-            return _Context.Feedbacks.FirstOrDefault(x => x.Id == Id);
+            return _Context.Feedbacks
+                .Include(feedback => feedback.Usuario)
+                .FirstOrDefault(x => x.Id == Id);
         }
 
         public List<Feedback> BuscarTodosFeedback(Guid servicoId)
         {
-            return _Context.Feedbacks.Where(x => x.Servico_Id == servicoId).ToList();
+            return _Context.Feedbacks
+                .Include(feedback => feedback.Usuario)
+                .Where(x => x.Servico_Id == servicoId)
+                .ToList();
         }
 
         public void RemoverFeedback(Guid id)

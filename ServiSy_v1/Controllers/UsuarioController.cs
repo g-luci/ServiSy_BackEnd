@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiSy_v1_Business.DTOs;
 using ServiSy_v1_Business.Models;
 using ServiSy_v1_Business.Service;
+using System.Security.Claims;
 
 namespace ServiSy_v1_API.Controllers
 {
@@ -41,7 +42,6 @@ namespace ServiSy_v1_API.Controllers
 
         [HttpGet]
         [Route("{id}")]
-        [Authorize]
         public IActionResult BuscarUsuario(Guid id)
         {
            var user = _usuarioService.BuscarUsuario(id);
@@ -65,6 +65,13 @@ namespace ServiSy_v1_API.Controllers
         [Authorize]
         public IActionResult AtualizarUsuario(Guid id, [FromBody] UsuarioCreateDto usuarioDto)
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null || userIdClaim != id.ToString())
+            {
+                return Forbid();
+            }
+
             var usuario = _mapper.Map<Usuario>(usuarioDto);
 
             _usuarioService.AtualizarUsuario(id,usuario);

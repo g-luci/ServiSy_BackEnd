@@ -11,7 +11,8 @@ namespace ServiSy_v1_Business.Interface
     {
         void AdicionarServico(Servico servico);
         Servico BuscarServico(Guid Id);
-        List<Servico> BuscarTodosServicos(Guid prestadorId);
+        List<Servico> BuscarTodosPaginado(Guid? prestadorId, int pagina, int tamanhoPagina);
+        int ContarTotalServico(Guid? prestadorId);
         void AtualizarServico(Servico servico);
         void RemoverServico(Guid id);
 
