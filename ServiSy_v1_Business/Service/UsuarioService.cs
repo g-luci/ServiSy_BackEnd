@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BC = BCrypt.Net.BCrypt;
 
 namespace ServiSy_v1_Business.Service
 {
@@ -25,7 +26,7 @@ namespace ServiSy_v1_Business.Service
         public string Autenticar(string email, string password)
         {
             var usuario = _usuarioRepository.BuscarPorEmail(email);
-            if (usuario == null || usuario.Password != password)
+            if (usuario == null || !BC.Verify(password, usuario.Password))
             {
                 throw new UnauthorizedAccessException("Email ou senha inválidos.");
             }
@@ -34,6 +35,8 @@ namespace ServiSy_v1_Business.Service
 
         public void AdicionarUsuario(Usuario usuario) 
         {
+            usuario.Password = BC.HashPassword(usuario.Password);
+
             _usuarioRepository.AdicionarUsuario(usuario);   
         }
 
@@ -49,6 +52,10 @@ namespace ServiSy_v1_Business.Service
 
             _mapper.Map(usuarioAtualizado, usuarioAlvo);
 
+            if (!string.IsNullOrEmpty(usuarioAtualizado.Password))
+            {
+                usuarioAlvo.Password = BC.HashPassword(usuarioAtualizado.Password);
+            }
 
             _usuarioRepository.AtualizarUsuario(usuarioAlvo);
         }
