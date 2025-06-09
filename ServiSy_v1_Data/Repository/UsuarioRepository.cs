@@ -29,6 +29,10 @@ namespace ServiSy_v1_Data.Repository
             return _Context.Usuarios.FirstOrDefault(x => x.Id == id);
         }
 
+        public Usuario BuscarPorEmail(string email)
+        {
+            return _Context.Usuarios.FirstOrDefault(x => x.Email == email);
+        }
         public void AtualizarUsuario(Usuario usuario)
         {
             _Context.Usuarios.Update(usuario);

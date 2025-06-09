@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using ServiSy_v1_Business.DTOs;
@@ -9,6 +10,7 @@ namespace ServiSy_v1_API.Controllers
 {
     [ApiController]
     [Route("v1/[controller]")]
+    [Authorize]
     public class ServicoController : ControllerBase
     {
         private readonly ServicoService _servicoService;
@@ -21,7 +23,6 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPost]
-        [Route("adicionar")]
         public IActionResult AdicionarService([FromBody] ServicoCreateDto servicoDto)
         {
             var servico = _mapper.Map<Servico>(servicoDto);
@@ -31,7 +32,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpGet]
-        [Route("buscar/{id}")]
+        [Route("{id}")]
         public IActionResult BuscarServico(Guid id)
         {
             var servico = _servicoService.BuscarServico(id);
@@ -46,7 +47,6 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpGet]
-        [Route("buscar_todos/{prestadorId}")]
         public IActionResult BuscarTodosServicos(Guid prestadorId)
         {
             var servicos = _servicoService.BuscarTodosServicos(prestadorId);
@@ -61,7 +61,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPatch]
-        [Route("atualizar/{id}")]
+        [Route("{id}")]
         public IActionResult AtualizarServico(Guid id, [FromBody] ServicoEditDto servicoDto)
         {
 
@@ -71,7 +71,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpDelete]
-        [Route("remover/{id}")]
+        [Route("{id}")]
         public IActionResult RemoverServico(Guid id)
         {
             var servico = _servicoService.BuscarServico(id);

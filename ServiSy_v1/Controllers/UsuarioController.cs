@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiSy_v1_Business.DTOs;
 using ServiSy_v1_Business.Models;
@@ -19,8 +20,28 @@ namespace ServiSy_v1_API.Controllers
             _mapper = mapper;
         }
 
+        [HttpPost]
+        [Route("login")]
+        public IActionResult Login([FromBody] UsuarioLoginDto loginDto)
+        {
+            if (loginDto == null)
+            {
+                return BadRequest("Requisição inválida.");
+            }
+
+            var token = _usuarioService.Autenticar(loginDto.Email, loginDto.Password);
+
+            if (token == null)
+            {
+                return Unauthorized("Email ou senha inválidos.");
+            }
+
+            return Ok(new { Token = token });
+        }
+
         [HttpGet]
-        [Route("buscar/{id}")]
+        [Route("{id}")]
+        [Authorize]
         public IActionResult BuscarUsuario(Guid id)
         {
            var user = _usuarioService.BuscarUsuario(id);
@@ -31,7 +52,6 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPost]
-        [Route("cadastrar")]
         public IActionResult CadastrarUsuario([FromBody] UsuarioCreateDto usuarioDto) 
         {
             var usuario = _mapper.Map<Usuario>(usuarioDto);
@@ -41,7 +61,8 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPatch]
-        [Route("atualizar/{id}")]
+        [Route("{id}")]
+        [Authorize]
         public IActionResult AtualizarUsuario(Guid id, [FromBody] UsuarioCreateDto usuarioDto)
         {
             var usuario = _mapper.Map<Usuario>(usuarioDto);

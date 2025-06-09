@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.Extensions.Options;
 
 namespace ServiSy_v1_Business.Service
 {
@@ -15,9 +16,9 @@ namespace ServiSy_v1_Business.Service
     {
         private readonly JwtSettings _jwtSettings;
 
-        public JwtTokenService(JwtSettings jwtSettings)
+        public JwtTokenService(IOptions<JwtSettings> jwtSettings)
         {
-            _jwtSettings = jwtSettings;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public string GerarToken(Usuario usuario)

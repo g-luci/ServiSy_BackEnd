@@ -12,12 +12,24 @@ namespace ServiSy_v1_Business.Service
     public class UsuarioService
     {
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IJwtTokenService _jwtTokenService;
         private readonly IMapper _mapper;
 
-        public UsuarioService(IUsuarioRepository usuarioRepository, IMapper mapper)
+        public UsuarioService(IUsuarioRepository usuarioRepository, IMapper mapper, IJwtTokenService jwtTokenService)
         {
             _usuarioRepository = usuarioRepository;
             _mapper = mapper;
+            _jwtTokenService = jwtTokenService;
+        }
+
+        public string Autenticar(string email, string password)
+        {
+            var usuario = _usuarioRepository.BuscarPorEmail(email);
+            if (usuario == null || usuario.Password != password)
+            {
+                throw new UnauthorizedAccessException("Email ou senha inválidos.");
+            }
+            return _jwtTokenService.GerarToken(usuario);
         }
 
         public void AdicionarUsuario(Usuario usuario) 

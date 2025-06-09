@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiSy_v1_Business.DTOs;
 using ServiSy_v1_Business.Models;
@@ -8,6 +9,7 @@ namespace ServiSy_v1_API.Controllers
 {
     [ApiController]
     [Route("v1/[controller]")]
+    [Authorize]
     public class FeedbackController : ControllerBase
     {
         private readonly FeedbackService _feedbackService;
@@ -20,7 +22,6 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPost]
-        [Route("adicionar")]
         public IActionResult AdicionarFeedback([FromBody] FeedbackCreateDto feedbackDto)
         {
             _feedbackService.AdicionarFeedback(_mapper.Map<Feedback>(feedbackDto));
@@ -29,7 +30,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpGet]
-        [Route("buscar/{id}")]
+        [Route("{id}")]
         public IActionResult BuscarFeedback(Guid id)
         {
             var feedback = _feedbackService.BuscarFeedback(id);
@@ -44,7 +45,6 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpGet]
-        [Route("buscar_todos/{servicoId}")]
         public IActionResult BuscarTodosFeedback(Guid servicoId)
         {
             var feedbacks = _feedbackService.BuscarTodosFeedback(servicoId);
@@ -59,7 +59,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpPatch]
-        [Route("atualizar/{id}")]
+        [Route("{id}")]
         public IActionResult AtualizarFeedback(Guid id, [FromBody] FeedbackEditDto feedbackDto)
         {
             _feedbackService.AtualizarFeedback(id, feedbackDto);
@@ -68,7 +68,7 @@ namespace ServiSy_v1_API.Controllers
         }
 
         [HttpDelete]
-        [Route("remover/{id}")]
+        [Route("{id}")]
         public IActionResult RemoverFeedback(Guid id)
         {
             _feedbackService.RemoverFeedback(id);

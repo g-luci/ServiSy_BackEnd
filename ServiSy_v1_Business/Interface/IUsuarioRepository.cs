@@ -11,6 +11,7 @@ namespace ServiSy_v1_Business.Interface
     {
         void AdicionarUsuario(Usuario usuario);
         Usuario BuscarUsuario(Guid id);
+        Usuario BuscarPorEmail(string email);
         void AtualizarUsuario(Usuario usuario);
     }
 }
